@@ -41,8 +41,18 @@ node {
             sh "'${antCommand}' -buildfile FacadeServices/ant/build.xml -Djboss.home.dir=/web/jboss -Ddeployment.dir=/web/jboss/standalone/deployments"
        }    
     }
+    stage('integrationTestCheckout') {
+      sh "mkdir jmeter-test"
+      dir('jmeter-test') {
+            // some block
+            git branch: 'master', credentialsId: 'munjal-github-ssh-Global', url: 'git@github.com:munjal-gc/jmeter-test.git'
+      }
+    }
     stage('integrationTestRun') {
-      bzt "Hello_API_Test_Plan.jmx"
+      // dir('jmeter-test') {
+      //      sh "/web/apache-jmeter-3.1/bin/jmeter.sh -n -t Hello_API_Test_Plan.jmx"
+      // }
+      bzt "jmeter-test/Hello_API_Test_Plan.jmx"
     }
    stage('Results') {
       // junit '**/target/surefire-reports/TEST-*.xml'
